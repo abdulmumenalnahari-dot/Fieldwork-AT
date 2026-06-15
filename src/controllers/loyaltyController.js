@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// ترقية المستخدم إلى VIP
 exports.upgradeToVIP = async (req, res) => {
     const { core_user_id } = req.body;
     try {
@@ -14,9 +13,7 @@ exports.upgradeToVIP = async (req, res) => {
     }
 };
 
-// يتم استدعاء هذه الدالة آلياً بعد إتمام أي طلب ناجح (تم ربطها منطقياً هنا للتوضيح)
 exports.addLoyaltyPoints = async (core_user_id, order_total_amount) => {
-    // كل 100 ريال/عملة تعطي نقطة واحدة
     const points_earned = Math.floor(order_total_amount / 100);
     await db.execute(`UPDATE user_profiles SET loyalty_points = loyalty_points + ? WHERE core_user_id = ?`, [points_earned, core_user_id]);
 };

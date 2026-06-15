@@ -20,7 +20,6 @@ exports.createOrUpdateProfile = async (req, res) => {
 
         await db.execute(query, [core_user_id, avatar_url, phone, address]);
 
-        // حوكمة البيانات: تسجيل العملية في سجل التدقيق
         await db.execute(
             `INSERT INTO audit_logs (core_user_id, action, details) VALUES (?, ?, ?)`,
             [core_user_id, 'تحديث الملف الشخصي', 'تم تحديث البيانات الديموغرافية بنجاح']

@@ -1,6 +1,5 @@
 const db = require('../config/db');
 
-// إضافة منتج إلى السلة
 exports.addToCart = async (req, res) => {
     try {
         const { core_user_id, core_product_id, quantity } = req.body;
@@ -14,7 +13,6 @@ exports.addToCart = async (req, res) => {
 
         await db.execute(query, [core_user_id, core_product_id, quantity]);
 
-        // التدقيق
         await db.execute(
             `INSERT INTO audit_logs (core_user_id, action, details) VALUES (?, ?, ?)`,
             [core_user_id, 'إضافة للسلة', `تمت إضافة المنتج رقم ${core_product_id} بكمية ${quantity}`]
@@ -31,7 +29,7 @@ exports.addToCart = async (req, res) => {
     }
 };
 
-// جلب سلة المستخدم
+
 exports.getCart = async (req, res) => {
     try {
         const { user_id } = req.params;

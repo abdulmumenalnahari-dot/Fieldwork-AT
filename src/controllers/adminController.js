@@ -2,10 +2,9 @@ const db = require('../config/db');
 
 exports.getDashboardStats = async (req, res) => {
     try {
-        // 1. إجمالي المبيعات والأرباح
         const [revenue] = await db.execute(`SELECT SUM(total_amount) as total_revenue, COUNT(id) as total_orders FROM orders WHERE status != 'cancelled'`);
         
-        // 2. أفضل المنتجات مبيعاً
+   
         const [topProducts] = await db.execute(`
             SELECT core_product_id, SUM(quantity) as sold_quantity 
             FROM order_items 
@@ -13,7 +12,6 @@ exports.getDashboardStats = async (req, res) => {
             ORDER BY sold_quantity DESC LIMIT 5
         `);
 
-        // 3. كبار العملاء (الأكثر شراءً)
         const [topUsers] = await db.execute(`
             SELECT core_user_id, SUM(total_amount) as total_spent 
             FROM orders 

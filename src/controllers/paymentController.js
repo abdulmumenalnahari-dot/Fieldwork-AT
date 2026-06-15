@@ -1,10 +1,8 @@
 const db = require('../config/db');
 
-// محاكاة دفع عبر بطاقة ائتمانية (Stripe/PayPal Mock)
 exports.processCardPayment = async (req, res) => {
     const { core_user_id, amount, card_token } = req.body;
     
-    // محاكاة تأخير الشبكة لمعالجة الدفع الحقيقي
     setTimeout(async () => {
         const transaction_id = 'ch_' + Math.random().toString(36).substr(2, 9);
         
@@ -21,7 +19,6 @@ exports.processCardPayment = async (req, res) => {
     }, 1500);
 };
 
-// نظام المرتجعات (Refund)
 exports.refundOrder = async (req, res) => {
     const connection = await db.getConnection();
     await connection.beginTransaction();
@@ -33,10 +30,8 @@ exports.refundOrder = async (req, res) => {
         
         const order = orders[0];
         
-        // إعادة المبلغ إلى محفظة المستخدم كتعويض
         await connection.execute(`UPDATE user_profiles SET wallet_balance = wallet_balance + ? WHERE core_user_id = ?`, [order.total_amount, order.core_user_id]);
         
-        // تحديث حالة الطلب
         await connection.execute(`UPDATE orders SET status = 'cancelled' WHERE id = ?`, [order.id]);
         
         await connection.execute(`INSERT INTO audit_logs (core_user_id, action, details) VALUES (?, ?, ?)`, [order.core_user_id, 'استرداد مالي', `تم إلغاء الطلب ${tracking_number} وإعادة ${order.total_amount} للمحفظة`]);
